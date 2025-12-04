@@ -22,12 +22,11 @@ export default class LinkedList {
 	}
 	
 	prepend(value){
+		let newHeadNode = new Node(value);
 		if (this.head === null) {
 			this.head = newNode;
 			return this;
 		}
-		
-		let newHeadNode = new Node(value);
 		newHeadNode.pointer = this.head;
 		this.head = newHeadNode;
 		return this;
@@ -46,9 +45,9 @@ export default class LinkedList {
 	}	
 		
 	size() {
-		let counter = 1;
+		let counter = 0;
 		let tail = this.head;
-		while (tail.pointer !== null) {
+		while (tail !== null) {
 			tail = tail.pointer;
 			counter++;
 		}
@@ -57,11 +56,11 @@ export default class LinkedList {
 		
 	
 	find(value){
-		let tail = this.head;
+		let current = this.head;
 		let counter = 0;
-		while (tail.pointer !== null) {
-			if (tail.value === value) return counter;
-			tail = tail.pointer;
+		while (current !== null) {
+			if (current.value === value) return counter;
+			current = current.pointer;
 			counter++;
 		}
 		
@@ -69,37 +68,88 @@ export default class LinkedList {
 	}
 	
 	at(index) {
-		let tail = this.head;
+		let current = this.head;
 		let counter = 0;
-		while(tail.pointer !== null) {
-			if (index === counter) return tail.value;
-			tail = tail.pointer;
+		while(current !== null) {
+			if (index === counter) return current.value;
+			current = current.pointer;
 			counter++;
 		}
 	}
 	
 	contains(value){
-		let tail = this.head;
-		while (tail.pointer !== null) {
-			if (tail.value === value) return true;
-			tail = tail.pointer;
+		let current = this.head;
+		while (current !== null) {
+			if (current.value === value) return true;
+			current = current.pointer;
 		}
-		
 		return false;
 	}
 	
 	insertAt(index, value) {
-		let counter = this.size - 1;
-		let newNode = Node(value);
+		let counter = 0;
+		let current = this.head;
+		let newNode = new Node(value);
+		 
+		while(current !== null) {
+			if (index - 1 === counter) {
+				let nextNode = current.pointer;
+				let previousNode = current;
+				newNode.pointer = nextNode;
+				previousNode.pointer = newNode;
+				return this;
+			}
+			current = current.pointer;
+			counter++;
+		}
 	}
 	
-	removeFrom(index) {}
+	removeFrom(index) {
+		if (this.head === null || index < 0) return this;
+		
+		// Case 1: Remove head
+		if(index === 0) {
+			this.head = this.head.pointer;
+			return this;
+		}
+		
+		let current = this.head;
+		let counter = 0;
+		
+		// Case 2: Remove node at given index other than head
+		while (current !== null) {
+			if (counter === index - 1){
+				let removingNode = current.pointer;
+				let nextNode = removingNode.pointer;
+				current.pointer = nextNode;
+				removingNode.pointer = null;
+				return this;
+			}
+			current = current.pointer; 
+			counter++;
+		}
+	}
 	
-	head() {}
+	head() {
+		return this.head.value;
+	}
 	
-	tail() {}
+	tail() {
+		let tail = this.head;
+		while (tail !== null && tail.pointer !== null) {
+			tail = tail.pointer;
+		}
+		return tail.value;
+	}
 	
-	toString(value) {}
-	
-	size() {}
+	toString() {
+		let valuesString = ''; 
+		let current = this.head;
+		while (current !== null) {
+			valuesString  += `${current.value} -> `;
+			current = current.pointer;
+		}
+		valuesString += "null";
+		return valuesString;
+	}
 }
